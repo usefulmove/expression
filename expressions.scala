@@ -28,21 +28,13 @@ object Exp:
         local
 
     /* unary operators */
-    val sqrt = (a: Double) => Math sqrt a
-    val inv = (a: Double) => 1 / a
-
     var cmds = HashMap[String, Double => Double]()
-    cmds.put("sqrt", sqrt)
-    cmds.put("inv", inv)
+    cmds.put("sqrt", (a: Double) => Math sqrt a)
+    cmds.put("inv", (a: Double) => 1 / a)
 
     /* binary operators */
-    val add = (a: Double, b: Double) => a + b
-    val sub = (a: Double, b: Double) => a - b
-    val mul = (a: Double, b: Double) => a * b
-    val div = (a: Double, b: Double) => a / b
-
     var cmds2 = HashMap[String, (Double, Double) => Double]()
-    cmds2.put("+", add)
-    cmds2.put("-", sub)
-    cmds2.put("x", mul)
-    cmds2.put("/", div)
+    cmds2.put("+", (a: Double, b: Double) => a + b)
+    cmds2.put("-", (a: Double, b: Double) => a - b)
+    cmds2.put("*", (a: Double, b: Double) => a * b)
+    cmds2.put("/", (a: Double, b: Double) => a / b)
