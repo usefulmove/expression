@@ -5,7 +5,6 @@ object Exp:
     def main(args: String*): Unit =
         def express(exp: Seq[String]): String =
             var stack = Stack[String]()
-
             exp foreach {op =>
                 (cmds contains op) ||
                 (cmds2 contains op) match
@@ -15,9 +14,7 @@ object Exp:
                             case _ => stack = process2(stack, cmds2(op))
                     case _ => stack push op
             }
-
             stack.head
-
         println(express(args))
 
     def process(stack: Stack[String], f: Double => Double): Stack[String] =
