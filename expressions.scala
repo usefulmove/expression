@@ -8,26 +8,23 @@ object Exp:
             exp foreach {op =>
                 (cmds contains op) ||
                 (cmds2 contains op) match
-                    case true =>
-                        (cmds contains op) match
-                            case true => stack = process(stack, cmds(op))
-                            case _ => stack = process2(stack, cmds2(op))
+                    case true => process(stack, op)
                     case _ => stack push op
             }
             stack.head
         println(express(args))
 
-    def process(stack: Stack[String], f: Double => Double): Stack[String] =
+    def process(stack: Stack[String], op: String): Stack[String] =
         var local = stack
-        val a = local.pop.toDouble
-        local push {(f(a)).toString}
-        local
-
-    def process2(stack: Stack[String], f: (Double, Double) => Double): Stack[String] =
-        var local = stack
-        val b = local.pop.toDouble
-        val a = local.pop.toDouble
-        local push {(f(a, b)).toString}
+        (cmds contains op) match {
+            case true => // unary
+                val a = local.pop.toDouble
+                local push {(cmds(op)(a)).toString}
+            case _ => // binary
+                val b = local.pop.toDouble
+                val a = local.pop.toDouble
+                local push {(cmds2(op)(a, b)).toString}
+        }
         local
 
     /* unary operators */
