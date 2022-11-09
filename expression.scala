@@ -7,10 +7,10 @@ object Exp:
             var stack = Stack[String]()
 
             exp foreach {op =>
-                cmds.contains(op) ||
-                cmds2.contains(op) match
+                (cmds contains op) ||
+                (cmds2 contains op) match
                     case true => {
-                        cmds.contains(op) match {
+                        (cmds contains op) match {
                             case true => stack = process(stack, cmds(op))
                             case _ => stack = process2(stack, cmds2(op))
                         }
@@ -36,7 +36,7 @@ object Exp:
         local
 
     /* unary operators */
-    val sqrt = (a: Double) => Math.sqrt(a)
+    val sqrt = (a: Double) => Math sqrt a
     val inv = (a: Double) => 1 / a
 
     var cmds = HashMap[String, Double => Double]()
