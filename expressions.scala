@@ -1,18 +1,18 @@
 import scala.collection.mutable.{HashMap, Stack}
 
 object Exp:
-    @main
-    def main(args: String*): Unit =
-        def express(exp: Seq[String]): String =
-            var stack = Stack[String]()
-            exp foreach {op =>
-                (cmds contains op) ||
-                (cmds2 contains op) match
-                    case true => process(stack, op)
-                    case _ => stack push op
-            }
-            stack.head
-        println(express(args))
+    @main def main(args: String*): Unit =
+        println(s"  ${express(args)}")
+
+    def express(exp: Seq[String]): String =
+        var stack = Stack[String]()
+        exp foreach {op =>
+            (cmds contains op) ||
+            (cmds2 contains op) match
+                case true => process(stack, op)
+                case _ => stack push op
+        }
+        stack.head
 
     def process(stack: Stack[String], op: String): Stack[String] =
         var local = stack
