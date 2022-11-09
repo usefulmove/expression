@@ -9,12 +9,10 @@ object Exp:
             exp foreach {op =>
                 (cmds contains op) ||
                 (cmds2 contains op) match
-                    case true => {
-                        (cmds contains op) match {
+                    case true =>
+                        (cmds contains op) match
                             case true => stack = process(stack, cmds(op))
                             case _ => stack = process2(stack, cmds2(op))
-                        }
-                    }
                     case _ => stack push op
             }
 
