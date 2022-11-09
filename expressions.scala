@@ -2,9 +2,9 @@ import scala.collection.mutable.{HashMap, Stack}
 
 object Exp:
     @main def main(args: String*): Unit =
-        println(s"  ${express(args)}")
+        println(s"  ${evaluate(args)}")
 
-    def express(exp: Seq[String]): String =
+    def evaluate(exp: Seq[String]): String =
         var stack = Stack[String]()
         exp foreach {op =>
             (cmds contains op) ||
@@ -36,5 +36,5 @@ object Exp:
     var cmds2 = HashMap[String, (Double, Double) => Double]()
     cmds2.put("+", (a: Double, b: Double) => a + b)
     cmds2.put("-", (a: Double, b: Double) => a - b)
-    cmds2.put("*", (a: Double, b: Double) => a * b)
+    cmds2.put("x", (a: Double, b: Double) => a * b)
     cmds2.put("/", (a: Double, b: Double) => a / b)
