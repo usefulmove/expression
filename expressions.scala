@@ -6,17 +6,16 @@ object Exp:
 
     def evaluate(exp: Seq[String]): String =
         var stack = Stack[String]()
-        exp foreach {op =>
+        for op <- exp do
             (cmds contains op) ||
             (cmds2 contains op) match
                 case true => process(stack, op)
                 case _ => stack push op
-        }
-        stack.head
+        stack mkString " "
 
     def process(stack: Stack[String], op: String): Stack[String] =
         var local = stack
-        (cmds contains op) match {
+        (cmds contains op) match
             case true => // unary
                 val a = local.pop.toDouble
                 local push {(cmds(op)(a)).toString}
@@ -24,7 +23,6 @@ object Exp:
                 val b = local.pop.toDouble
                 val a = local.pop.toDouble
                 local push {(cmds2(op)(a, b)).toString}
-        }
         local
 
     /* unary operators */
