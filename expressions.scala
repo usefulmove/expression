@@ -2,7 +2,7 @@ import scala.collection.mutable.HashMap
 
 object Exp:
     @main def main(args: String*): Unit =
-        println(s"${formatOutput(evaluate(args))}")
+        println(s"${ formatOutput(evaluate(args)) }")
 
     enum Command:
         case Unary, Binary, Stack
@@ -38,6 +38,7 @@ object Exp:
     /* stack manipulation */
     val cmds_stack = HashMap[String, List[String] => List[String]]()
     cmds_stack.put("dup", (s: List[String]) => {s(0) :: s})
+    cmds_stack.put("drop", (s: List[String]) => {s.tail})
     cmds_stack.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
     cmds_stack.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
     cmds_stack.put("io", (s: List[String]) => {
