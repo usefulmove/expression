@@ -41,12 +41,12 @@ object Exp:
     cmds_stack.put("drop", (s: List[String]) => s.tail)
     cmds_stack.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
     cmds_stack.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
-    cmds_stack.put("io", (s: List[String]) => {
+    cmds_stack.put("io", (s: List[String]) =>
         (1 to s(0).toInt)
         .reverse
         .map {_.toString}
         .toList ::: s.tail
-    })
+    )
 
     def isCommand(op: String): Option[Command] = op match
         case op if cmds_unary contains op => Some(Command.Unary)
