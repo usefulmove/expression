@@ -15,15 +15,15 @@ object Exp:
         isCommand(op) match
             case Some(Command.Unary) =>
                 val a = s(0).toDouble
-                List({(cmds_unary(op)(a)).toString}) :++ s.tail
+                cmds_unary(op)(a).toString :: s.tail
             case Some(Command.Binary) =>
                 val b = s(0).toDouble
                 val a = s(1).toDouble
-                List({(cmds_binary(op)(a, b)).toString}) :++ s.slice(2, s.length)
+                cmds_binary(op)(a, b).toString :: s.slice(2, s.length)
             case Some(Command.Stack) =>
                 cmds_stack(op)(s)
             case _ => // add value to stack
-                List(op) :++ s
+                op :: s
 
     /* unary operators */
     val cmds_unary = HashMap[String, Double => Double]()
@@ -39,7 +39,7 @@ object Exp:
 
     /* stack manipulation */
     val cmds_stack = HashMap[String, List[String] => List[String]]()
-    cmds_stack.put("dup", (s: List[String]) => {s :++ List(s(0))})
+    cmds_stack.put("dup", (s: List[String]) => {s(0) :: s})
     cmds_stack.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
     cmds_stack.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
 
