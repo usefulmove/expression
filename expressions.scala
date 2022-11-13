@@ -4,24 +4,26 @@ object Exp:
     @main def main(args: String*): Unit =
         println(s"  ${evaluate(args)}")
 
+    enum Command:
+        case Unary, Binary
+
     def evaluate(exp: Seq[String]): String =
         var stack = Stack[String]()
-        for op <- exp do
-            isCmd(op) match
-                case true => process(stack, op)
-                case _ => stack push op
+        exp foreach {process(stack, _)}
         stack mkString " "
 
     def process(stack: Stack[String], op: String): Stack[String] =
         var local = stack
-        (cmds contains op) match
-            case true => // unary
+        isCommand(op) match
+            case Some(Command.Unary) =>
                 val a = local.pop.toDouble
                 local push {(cmds(op)(a)).toString}
-            case _ => // binary
+            case Some(Command.Binary) =>
                 val b = local.pop.toDouble
                 val a = local.pop.toDouble
                 local push {(cmds2(op)(a, b)).toString}
+            case _ =>
+                local push op
         local
 
     /* unary operators */
@@ -36,5 +38,7 @@ object Exp:
     cmds2.put("x", (a: Double, b: Double) => a * b)
     cmds2.put("/", (a: Double, b: Double) => a / b)
 
-    def isCmd(op: String): Boolean =
-        (cmds contains op) || (cmds2 contains op)
+    def isCommand(op: String): Option[Command] =
+        if (cmds contains op) return Some(Command.Unary)
+        if (cmds2 contains op) return Some(Command.Binary)
+        None
