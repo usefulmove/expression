@@ -1,4 +1,4 @@
-import scala.collection.mutable.{HashMap, Stack}
+import scala.collection.mutable.HashMap
 
 object Exp:
     @main def main(args: String*): Unit =
@@ -8,27 +8,23 @@ object Exp:
         case Unary, Binary, Stack
 
     def evaluate(exp: Seq[String]): String =
-        var stack = Stack[String]()
-        exp foreach {process(stack, _)}
+        var stack = List[String]()
+        exp foreach {op => stack = process(stack, op)}
         stack mkString " "
 
-    def process(stack: Stack[String], op: String): Stack[String] =
-        var local = stack
+    def process(stack: List[String], op: String): List[String] =
         isCommand(op) match
             case Some(Command.Unary) =>
-                val a = local.pop.toDouble
-                local push {(cmds_unary(op)(a)).toString}
+                val a = stack(0).toDouble
+                List({(cmds_unary(op)(a)).toString}) :++ stack.tail
             case Some(Command.Binary) =>
-                val b = local.pop.toDouble
-                val a = local.pop.toDouble
-                local push {(cmds_binary(op)(a, b)).toString}
+                val b = stack(0).toDouble
+                val a = stack(1).toDouble
+                List({(cmds_binary(op)(a, b)).toString}) :++ stack.slice(2, stack.length)
             case Some(Command.Stack) =>
-                val a = local.pop
-                local push a
-                local push a
-            case _ =>
-                local push op
-        local
+                cmds_stack(op)(stack)
+            case _ => // add value to stack
+                List(op) :++ stack
 
     /* unary operators */
     var cmds_unary = HashMap[String, Double => Double]()
@@ -43,8 +39,10 @@ object Exp:
     cmds_binary.put("/", (a: Double, b: Double) => a / b)
 
     /* stack manipulation */
-    var cmds_stack = HashMap[String, Stack[String] => Stack[String]]()
-    cmds_stack.put("dup", (stack: Stack[String]) => stack.push(stack.top))
+    var cmds_stack = HashMap[String, List[String] => List[String]]()
+    cmds_stack.put("dup", (stack: List[String]) => {stack :++ List(stack(0))})
+    cmds_stack.put("sum", (stack: List[String]) => List(stack.foldLeft(0.0){_+_.toDouble}.toString))
+    cmds_stack.put("prod", (stack: List[String]) => List(stack.foldLeft(1.0){_*_.toDouble}.toString))
 
     def isCommand(op: String): Option[Command] =
         if (cmds_unary contains op) return Some(Command.Unary)
