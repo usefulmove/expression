@@ -20,10 +20,8 @@ object Exp:
                 val b = s(0).toDouble
                 val a = s(1).toDouble
                 cmds_binary(op)(a, b).toString :: s.slice(2, s.length)
-            case Some(Command.Stack) =>
-                cmds_stack(op)(s)
-            case _ => // add value to stack
-                op :: s
+            case Some(Command.Stack) => cmds_stack(op)(s)
+            case _ => op :: s // add value to stack
 
     /* unary operators */
     val cmds_unary = HashMap[String, Double => Double]()
