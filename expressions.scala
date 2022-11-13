@@ -7,8 +7,7 @@ object Exp:
     def evaluate(exp: Seq[String]): String =
         var stack = Stack[String]()
         for op <- exp do
-            (cmds contains op) ||
-            (cmds2 contains op) match
+            isCmd(op) match
                 case true => process(stack, op)
                 case _ => stack push op
         stack mkString " "
@@ -36,3 +35,6 @@ object Exp:
     cmds2.put("-", (a: Double, b: Double) => a - b)
     cmds2.put("x", (a: Double, b: Double) => a * b)
     cmds2.put("/", (a: Double, b: Double) => a / b)
+
+    def isCmd(op: String): Boolean =
+        (cmds contains op) || (cmds2 contains op)
