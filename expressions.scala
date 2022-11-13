@@ -37,8 +37,8 @@ object Exp:
 
     /* stack manipulation */
     val cmds_stack = HashMap[String, List[String] => List[String]]()
-    cmds_stack.put("dup", (s: List[String]) => {s(0) :: s})
-    cmds_stack.put("drop", (s: List[String]) => {s.tail})
+    cmds_stack.put("dup", (s: List[String]) => s(0) :: s)
+    cmds_stack.put("drop", (s: List[String]) => s.tail)
     cmds_stack.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
     cmds_stack.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
     cmds_stack.put("io", (s: List[String]) => {
@@ -54,4 +54,9 @@ object Exp:
         case op if cmds_stack contains op => Some(Command.Stack)
         case _ => None
 
-    def formatOutput(out: String): String = (out split " ").reverse mkString "\n"
+    def formatOutput(out: String): String =
+        (out split " ")
+        .zipWithIndex
+        .reverse
+        .map {case (element, i) => s"${(i + 'a').toChar}.  $element"}
+        .mkString("\n")
