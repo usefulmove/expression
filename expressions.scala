@@ -8,23 +8,22 @@ object Exp:
         case Unary, Binary, Stack
 
     def evaluate(exp: Seq[String]): String =
-        var st = List[String]()
-        exp foreach {op => st = process(st, op)}
-        st mkString " "
+        val s = exp.foldLeft(List[String]()) {process(_, _)}
+        s mkString " "
 
-    def process(st: List[String], op: String): List[String] =
+    def process(s: List[String], op: String): List[String] =
         isCommand(op) match
             case Some(Command.Unary) =>
-                val a = st(0).toDouble
-                List({(cmds_unary(op)(a)).toString}) :++ st.tail
+                val a = s(0).toDouble
+                List({(cmds_unary(op)(a)).toString}) :++ s.tail
             case Some(Command.Binary) =>
-                val b = st(0).toDouble
-                val a = st(1).toDouble
-                List({(cmds_binary(op)(a, b)).toString}) :++ st.slice(2, st.length)
+                val b = s(0).toDouble
+                val a = s(1).toDouble
+                List({(cmds_binary(op)(a, b)).toString}) :++ s.slice(2, s.length)
             case Some(Command.Stack) =>
-                cmds_stack(op)(st)
+                cmds_stack(op)(s)
             case _ => // add value to stack
-                List(op) :++ st
+                List(op) :++ s
 
     /* unary operators */
     val cmds_unary = HashMap[String, Double => Double]()
@@ -40,9 +39,9 @@ object Exp:
 
     /* stack manipulation */
     val cmds_stack = HashMap[String, List[String] => List[String]]()
-    cmds_stack.put("dup", (st: List[String]) => {st :++ List(st(0))})
-    cmds_stack.put("sum", (st: List[String]) => List(st.foldLeft(0.0){_+_.toDouble}.toString))
-    cmds_stack.put("prod", (st: List[String]) => List(st.foldLeft(1.0){_*_.toDouble}.toString))
+    cmds_stack.put("dup", (s: List[String]) => {s :++ List(s(0))})
+    cmds_stack.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
+    cmds_stack.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
 
     def isCommand(op: String): Option[Command] = op match
         case op if cmds_unary contains op => Some(Command.Unary)
