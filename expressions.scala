@@ -7,36 +7,43 @@ object Exp:
     enum Command:
         case Unary, Binary, General
 
+    object Command:
+        def isCommand(op: String): Option[Command] = op match
+            case op if cmds_unary contains op => Some(Command.Unary)
+            case op if cmds_binary contains op => Some(Command.Binary)
+            case op if cmds contains op => Some(Command.General)
+            case _ => None
+
     val delim = " "
-    var lambda = Seq[String]()
+    var lambda = Seq[String]() // anonymous function (function literal)
 
     def evaluateOps(ops: Seq[String], st: List[String]): String =
-        var recording = false // storing function literal
+        var recording = false
         val out_st = (ops foldLeft st) {(acc, op) =>
             isSpecialOp(op) match
                 case true =>
                     op match
-                        case "[" => // start lambda recording
+                        case "[" => // start recording anonymous function
                             lambda = Seq[String]()
                             recording = true
                             acc
-                        case "]" => // stop  lambda recording
+                        case "]" => // stop recording
                             recording = false
                             acc
-                        case "_" => // execute lambda on current stack
+                        case "_" => // evaluate anonymous function on current stack
                             (evaluateOps(lambda, acc) split delim).toList
                         case _ => ???
                 case _ =>
                     recording match
                         case false => processOp(op, acc)
                         case _ =>
-                            lambda = lambda :+ op // append op to stored function literal
+                            lambda = lambda :+ op // append op to stored anonymous function
                             acc
         }
         out_st mkString delim
 
     def processOp(op: String, s: List[String]): List[String] =
-        isCommand(op) match
+        Command.isCommand(op) match
             case Some(Command.Unary) =>
                 val a = s(0).toDouble
                 cmds_unary(op)(a).toString :: s.tail
@@ -75,12 +82,6 @@ object Exp:
     cmds.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
     cmds.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
     cmds.put("swap", (s: List[String]) => s(1) :: s(0) :: s.slice(2, s.length))
-
-    def isCommand(op: String): Option[Command] = op match
-        case op if cmds_unary contains op => Some(Command.Unary)
-        case op if cmds_binary contains op => Some(Command.Binary)
-        case op if cmds contains op => Some(Command.General)
-        case _ => None
 
     /* special ops */
     val cmds_ops = HashSet[String]("[", "]", "_")
