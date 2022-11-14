@@ -2,16 +2,17 @@ import scala.collection.mutable.{HashMap, HashSet}
 
 object Exp:
     @main def main(args: String*): Unit =
-        println(s"${ formatOutput(evaluate(args, List[String]())) }")
+        println(s"${ formatOutput(evaluateOps(args, List[String]())) }")
 
     enum Command:
         case Unary, Binary, General
 
-    def evaluate(exp: Seq[String], st: List[String]): String =
-        val delim = " "
-        var lambda = Seq[String]()
+    val delim = " "
+    var lambda = Seq[String]()
+
+    def evaluateOps(ops: Seq[String], st: List[String]): String =
         var recording = false // storing function literal
-        val s = (exp foldLeft st) {(acc, op) =>
+        val out_st = (ops foldLeft st) {(acc, op) =>
             isSpecialOp(op) match
                 case true =>
                     op match
@@ -23,18 +24,18 @@ object Exp:
                             recording = false
                             acc
                         case "_" => // execute lambda on current stack
-                            evaluate(lambda, acc).split(delim).toList
+                            (evaluateOps(lambda, acc) split delim).toList
                         case _ => ???
                 case _ =>
                     recording match
-                        case false => processStack(acc, op)
+                        case false => processOp(op, acc)
                         case _ =>
-                            lambda = op +: lambda // append op to stored function literal
+                            lambda = lambda :+ op // append op to stored function literal
                             acc
         }
-        s mkString delim
+        out_st mkString delim
 
-    def processStack(s: List[String], op: String): List[String] =
+    def processOp(op: String, s: List[String]): List[String] =
         isCommand(op) match
             case Some(Command.Unary) =>
                 val a = s(0).toDouble
@@ -70,6 +71,7 @@ object Exp:
         .map {_.toString}
         .toList ::: s.tail
     )
+    cmds.put("map", (s: List[String]) => s map {op => evaluateOps(lambda, List[String](op))})
 
     def isCommand(op: String): Option[Command] = op match
         case op if cmds_unary contains op => Some(Command.Unary)
@@ -83,7 +85,7 @@ object Exp:
 
 
     def formatOutput(out: String): String =
-        (out split " ")
+        (out split delim)
         .zipWithIndex
         .reverse
         .map {case (element, i) => s"${(i + 'a').toChar}.  $element"}
