@@ -1,7 +1,7 @@
 import scala.collection.mutable.{HashMap, HashSet}
 
-object Exp:
-    @main def main(args: String*): Unit =
+object Expressions:
+    @main def exp(args: String*): Unit =
         println(s"${ formatOutput(evaluateOps(args, List[String]())) }")
 
     enum Command:
