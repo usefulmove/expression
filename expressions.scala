@@ -11,7 +11,7 @@ object Exp:
         val delim = " "
         var lambda = Seq[String]()
         var recording = false // storing function literal
-        val s = exp.foldLeft(st) {(acc, op) =>
+        val s = (exp foldLeft st) {(acc, op) =>
             isSpecialOp(op) match
                 case true =>
                     op match
