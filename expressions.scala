@@ -92,5 +92,7 @@ object Expressions:
         (out split delim)
         .zipWithIndex
         .reverse
-        .map {case (element, i) => s"${(i + 'a').toChar}.  $element"}
-        .mkString("\n")
+        .map {(element, i) =>
+            val pref = if i <= 'z' - 'a' then (i + 'a').toChar else "~"
+            s"${pref}.  $element"
+        } mkString "\n"
