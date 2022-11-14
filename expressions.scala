@@ -49,8 +49,10 @@ object Exp:
 
     /* unary operators */
     val cmds_unary = HashMap[String, Double => Double]()
-    cmds_unary.put("sqrt", (a: Double) => Math sqrt a)
+    cmds_unary.put("abs", (a: Double) => a.abs)
     cmds_unary.put("inv", (a: Double) => 1 / a)
+    cmds_unary.put("sgn", (a: Double) => a.sign)
+    cmds_unary.put("sqrt", (a: Double) => Math sqrt a)
 
     /* binary operators */
     val cmds_binary = HashMap[String, (Double, Double) => Double]()
@@ -63,8 +65,6 @@ object Exp:
     val cmds = HashMap[String, List[String] => List[String]]()
     cmds.put("dup", (s: List[String]) => s(0) :: s)
     cmds.put("drop", (s: List[String]) => s.tail)
-    cmds.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
-    cmds.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
     cmds.put("io", (s: List[String]) =>
         (1 to s(0).toInt)
         .reverse
@@ -72,6 +72,9 @@ object Exp:
         .toList ::: s.tail
     )
     cmds.put("map", (s: List[String]) => s map {op => evaluateOps(lambda, List[String](op))})
+    cmds.put("prod", (s: List[String]) => List(s.foldLeft(1.0){_*_.toDouble}.toString))
+    cmds.put("sum", (s: List[String]) => List(s.foldLeft(0.0){_+_.toDouble}.toString))
+    cmds.put("swap", (s: List[String]) => s(1) :: s(0) :: s.slice(2, s.length))
 
     def isCommand(op: String): Option[Command] = op match
         case op if cmds_unary contains op => Some(Command.Unary)
