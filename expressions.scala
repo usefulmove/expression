@@ -4,7 +4,7 @@ object Expressions:
     @main def exp(args: String*): Unit =
         println(s"${ formatOutput(evaluateOps(args, List())) }")
 
-    val exp_version = "0.1.0"
+    val exp_version = "0.1.0a"
 
     enum Command:
         case Unary, Binary, General, Display
@@ -58,7 +58,9 @@ object Expressions:
 
     /* unary operators */
     val cmds_unary = HashMap[String, Double => Double]()
+    cmds_unary.put("!", a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble})
     cmds_unary.put("abs", _.abs)
+    cmds_unary.put("chs", -_)
     cmds_unary.put("inv", 1 / _)
     cmds_unary.put("sqrt", Math sqrt _)
 
@@ -68,17 +70,23 @@ object Expressions:
     cmds_binary.put("-", _ - _)
     cmds_binary.put("x", _ * _)
     cmds_binary.put("/", _ / _)
+    cmds_binary.put("max", _.max(_))
+    cmds_binary.put("min", _.min(_))
+    cmds_binary.put("%", _ % _)
 
     /* stack manipulation */
     val cmds = HashMap[String, List[String] => List[String]]()
+    cmds.put("count", st => st.length.toString :: st)
     cmds.put("dup", st => st.head :: st)
     cmds.put("drop", _.tail)
+    cmds.put("dropn", st => st.drop(st.head.toInt + 1))
     cmds.put("red", st =>
         var out_st = st
         for _ <- 1 to st.length - 1 do
             out_st = (evaluateOps(lambda, out_st) split delim).toList
         out_st
     )
+    cmds.put("rev", st => st.reverse)
     cmds.put("roll", st => st.tail :+ st.head)
     cmds.put("rolln", st =>
         val n = st.head.toInt
@@ -102,7 +110,11 @@ object Expressions:
         .toList ::: st.tail
     )
     cmds.put("map", _ map {op => evaluateOps(lambda, List[String](op))})
+    cmds.put("sum", st => List(st.foldLeft(0.0){_ + _.toDouble}.toString))
+    cmds.put("prod", st => List(st.foldLeft(1.0){_ * _.toDouble}.toString))
     cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
+    cmds.put("take", _.take(1))
+    cmds.put("taken", st => st.tail.take(st.head.toInt))
     cmds.put("version", exp_version :: _)
 
     /* special ops */
