@@ -19,8 +19,8 @@ object Expressions:
             case _ => None
 
         /**
-        * unary operators (double -> double)
-        */
+         * unary operators (double -> double)
+         */
         val cmds_unary = HashMap[String, Double => Double]()
         cmds_unary.put("!", a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble})
         cmds_unary.put("abs", _.abs)
@@ -29,8 +29,8 @@ object Expressions:
         cmds_unary.put("sqrt", Math sqrt _)
 
         /**
-        * binary operators (double, double -> double)
-        */
+         * binary operators (double, double -> double)
+         */
         val cmds_binary = HashMap[String, (Double, Double) => Double]()
         cmds_binary.put("+", _ + _)
         cmds_binary.put("-", _ - _)
@@ -41,8 +41,8 @@ object Expressions:
         cmds_binary.put("%", _ % _)
 
         /**
-        * general (stack manipulation)
-        */
+         * general (stack manipulation)
+         */
         val cmds = HashMap[String, List[String] => List[String]]()
         cmds.put("cls", st => Nil)
         cmds.put("count", st => st.length.toString :: st)
@@ -93,7 +93,9 @@ object Expressions:
         cmds.put("taken", st => st.tail.take(st.head.toInt))
         cmds.put("version", exp_version :: _)
 
-        /* special ops */
+        /**
+         * special ops
+         */
         val cmds_ops = HashSet[String]("[", "]", "_")
         def isSpecialOp(op: String): Boolean = cmds_ops contains op
 
