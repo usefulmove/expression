@@ -20,14 +20,14 @@ object Expressions:
             case _ => None
 
         /* support functions */
-        def unary_double(f: Double => Double): String => String =
-            (a: String) => f(a.toDouble).toString
         def unary_int(f: Int => Int): String => String =
             (a: String) => f(a.toInt).toString
-        def binary_double(f: (Double, Double) => Double): (String, String) => String =
-            (a: String, b: String) => f(a.toDouble, b.toDouble).toString
+        def unary_double(f: Double => Double): String => String =
+            (a: String) => f(a.toDouble).toString
         def binary_int(f: (Int, Int) => Int): (String, String) => String =
             (a: String, b: String) => f(a.toInt, b.toInt).toString
+        def binary_double(f: (Double, Double) => Double): (String, String) => String =
+            (a: String, b: String) => f(a.toDouble, b.toDouble).toString
 
         /**
          * constant functions
