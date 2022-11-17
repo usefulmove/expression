@@ -4,20 +4,22 @@ object Expressions:
     @main def exp(args: String*): Unit =
         println(s"${ formatOutput(evaluateOps(args, List())) }")
 
-    val exp_version = "0.1.0a"
+    val exp_version = "0.1.0b"
+    val delim = " "
 
     enum Command:
-        case Unary, Binary, General, Display
+        case Binary, Display, General, Unary, Variable
 
     object Command:
         def isCommand(op: String): Option[Command] = op match
             case op if cmds contains op => Some(Command.General)
             case op if cmds_unary contains op => Some(Command.Unary)
             case op if cmds_binary contains op => Some(Command.Binary)
+            case op if mem contains op => Some(Command.Variable)
             case _ => None
 
-    val delim = " "
     var lambda = Seq[String]() // anonymous function (function literal)
+    var mem = HashMap[String, String]() // variable memory
 
     def evaluateOps(ops: Seq[String], st: List[String]): String =
         var recording = false
@@ -54,9 +56,12 @@ object Expressions:
                 val b = st.head.toDouble
                 val a = st.tail.head.toDouble
                 cmds_binary(op)(a, b).toString :: st.tail.tail
+            case Some(Command.Variable) => mem(op) :: st
             case _ => op :: st // add value to stack
 
-    /* unary operators */
+    /**
+     * unary operators (double -> double)
+     */
     val cmds_unary = HashMap[String, Double => Double]()
     cmds_unary.put("!", a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble})
     cmds_unary.put("abs", _.abs)
@@ -64,7 +69,9 @@ object Expressions:
     cmds_unary.put("inv", 1 / _)
     cmds_unary.put("sqrt", Math sqrt _)
 
-    /* binary operators */
+    /**
+     * binary operators (double, double -> double)
+     */
     val cmds_binary = HashMap[String, (Double, Double) => Double]()
     cmds_binary.put("+", _ + _)
     cmds_binary.put("-", _ - _)
@@ -74,8 +81,11 @@ object Expressions:
     cmds_binary.put("min", _.min(_))
     cmds_binary.put("%", _ % _)
 
-    /* stack manipulation */
+    /**
+     * general (stack manipulation)
+     */
     val cmds = HashMap[String, List[String] => List[String]]()
+    cmds.put("cls", st => Nil)
     cmds.put("count", st => st.length.toString :: st)
     cmds.put("dup", st => st.head :: st)
     cmds.put("drop", _.tail)
@@ -111,7 +121,13 @@ object Expressions:
     )
     cmds.put("map", _ map {op => evaluateOps(lambda, List[String](op))})
     cmds.put("sum", st => List(st.foldLeft(0.0){_ + _.toDouble}.toString))
+    cmds.put("pi", Math.PI.toString :: _)
     cmds.put("prod", st => List(st.foldLeft(1.0){_ * _.toDouble}.toString))
+    cmds.put("store", st =>
+        val name :: value :: rem_st = st : @unchecked
+        mem.put(name, value) // store value string in hashmap
+        rem_st
+    )
     cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
     cmds.put("take", _.take(1))
     cmds.put("taken", st => st.tail.take(st.head.toInt))
