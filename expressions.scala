@@ -20,13 +20,13 @@ object Expressions:
             case _ => None
 
         /* support functions */
-        def unary_int(f: Int => Int): String => String =
+        def unaryInt(f: Int => Int): String => String =
             (a: String) => f(a.toInt).toString
-        def unary_double(f: Double => Double): String => String =
+        def unaryDouble(f: Double => Double): String => String =
             (a: String) => f(a.toDouble).toString
-        def binary_int(f: (Int, Int) => Int): (String, String) => String =
+        def binaryInt(f: (Int, Int) => Int): (String, String) => String =
             (a: String, b: String) => f(a.toInt, b.toInt).toString
-        def binary_double(f: (Double, Double) => Double): (String, String) => String =
+        def binaryDouble(f: (Double, Double) => Double): (String, String) => String =
             (a: String, b: String) => f(a.toDouble, b.toDouble).toString
 
         /**
@@ -42,50 +42,50 @@ object Expressions:
          * remove top element from top of stack and push result
          */
         val cmds_unary = HashMap[String, String => String]()
-        cmds_unary.put("!", unary_double {a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}})
-        cmds_unary.put("abs", unary_double {_.abs})
-        cmds_unary.put("ceil", unary_double {Math.ceil})
-        cmds_unary.put("chs", unary_double {-_})
-        cmds_unary.put("floor", unary_double {Math.floor})
-        cmds_unary.put("inv", unary_double {1 / _})
-        cmds_unary.put("sqrt", unary_double {Math.sqrt})
-        cmds_unary.put("round", unary_double {a => (Math round a).toDouble})
+        cmds_unary.put("!", unaryDouble {a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}})
+        cmds_unary.put("abs", unaryDouble {_.abs})
+        cmds_unary.put("ceil", unaryDouble {Math.ceil})
+        cmds_unary.put("chs", unaryDouble {-_})
+        cmds_unary.put("floor", unaryDouble {Math.floor})
+        cmds_unary.put("inv", unaryDouble {1 / _})
+        cmds_unary.put("sqrt", unaryDouble {Math.sqrt})
+        cmds_unary.put("round", unaryDouble {a => (Math round a).toDouble})
         /* trigonometric functions */
-        cmds_unary.put("sin", unary_double {Math.sin})
-        cmds_unary.put("cos", unary_double {Math.cos})
-        cmds_unary.put("tan", unary_double {Math.tan})
-        cmds_unary.put("asin", unary_double {Math.asin})
-        cmds_unary.put("acos", unary_double {Math.acos})
-        cmds_unary.put("atan", unary_double {Math.atan})
+        cmds_unary.put("sin", unaryDouble {Math.sin})
+        cmds_unary.put("cos", unaryDouble {Math.cos})
+        cmds_unary.put("tan", unaryDouble {Math.tan})
+        cmds_unary.put("asin", unaryDouble {Math.asin})
+        cmds_unary.put("acos", unaryDouble {Math.acos})
+        cmds_unary.put("atan", unaryDouble {Math.atan})
         /* logarithmic functions */
-        cmds_unary.put("ln", unary_double {Math.log})
-        cmds_unary.put("log2", unary_double {a => (Math log10 a) / (Math log10 2)})
-        cmds_unary.put("log", unary_double {Math.log10})
+        cmds_unary.put("ln", unaryDouble {Math.log})
+        cmds_unary.put("log2", unaryDouble {a => (Math log10 a) / (Math log10 2)})
+        cmds_unary.put("log", unaryDouble {Math.log10})
         /* conversion functions */
-        cmds_unary.put("rad_deg", unary_double {Math.toDegrees})
-        cmds_unary.put("deg_rad", unary_double {Math.toRadians})
+        cmds_unary.put("rad_deg", unaryDouble {Math.toDegrees})
+        cmds_unary.put("deg_rad", unaryDouble {Math.toRadians})
         /* bitwise operations */
-        cmds_unary.put("not", unary_int {~_})
+        cmds_unary.put("not", unaryInt {~_})
 
         /**
          * binary functions (string, string => string)
          * remove two elements from top of stack and push result
          */
         val cmds_binary = HashMap[String, (String, String) => String]()
-        cmds_binary.put("+", binary_double {_ + _})
-        cmds_binary.put("-", binary_double {_ - _})
-        cmds_binary.put("x", binary_double {_ * _})
-        cmds_binary.put("/", binary_double {_ / _})
-        cmds_binary.put("^", binary_double {Math.pow})
-        cmds_binary.put("%", binary_double {_ % _})
-        cmds_binary.put("max", binary_double {Math.max})
-        cmds_binary.put("min", binary_double {Math.min})
+        cmds_binary.put("+", binaryDouble {_ + _})
+        cmds_binary.put("-", binaryDouble {_ - _})
+        cmds_binary.put("x", binaryDouble {_ * _})
+        cmds_binary.put("/", binaryDouble {_ / _})
+        cmds_binary.put("^", binaryDouble {Math.pow})
+        cmds_binary.put("%", binaryDouble {_ % _})
+        cmds_binary.put("max", binaryDouble {Math.max})
+        cmds_binary.put("min", binaryDouble {Math.min})
         /* logarithmic functions */
-        cmds_binary.put("logn", binary_double {(a, b) => (Math log10 a) / (Math log10 b)})
+        cmds_binary.put("logn", binaryDouble {(a, b) => (Math log10 a) / (Math log10 b)})
         /* bitwise operations */
-        cmds_binary.put("and", binary_int {_ & _})
-        cmds_binary.put("or", binary_int {_ | _})
-        cmds_binary.put("xor", binary_int {_ ^ _})
+        cmds_binary.put("and", binaryInt {_ & _})
+        cmds_binary.put("or", binaryInt {_ | _})
+        cmds_binary.put("xor", binaryInt {_ ^ _})
 
         /**
          * general (stack manipulation)
