@@ -134,7 +134,7 @@ object Expressions:
             rem_st
         )
         cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
-        cmds.put("take", _.take(1))
+        cmds.put("take", _ take 1)
         cmds.put("taken", st => st.tail take st.head.toInt)
         cmds.put("version", exp_version :: _)
 
