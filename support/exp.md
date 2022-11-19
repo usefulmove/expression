@@ -1,7 +1,7 @@
 # exp
 
 ## features
-- `ascii` command
+- ~~`ascii` command~~
 - ~~range (`to` and `until`) commands~~
 
 ## maintainability
