@@ -2,7 +2,8 @@ import scala.collection.mutable.{HashMap, HashSet}
 
 object Expressions:
     @main def exp(args: String*): Unit =
-        println(s"${ formatOutput(evaluateOps(args, List())) }")
+        val output = formatOutput(evaluateOps(args, Nil))
+        if !output.isEmpty then println(s"  $output")
 
     val exp_version = "0.2.0a"
     val delim = " "
@@ -31,7 +32,7 @@ object Expressions:
             f(a.toDouble, b.toDouble).toString :: rest
 
         /**
-         * command definitions
+         *  command definitions
          */
         val cmds = HashMap[String, List[String] => List[String]]()
 
@@ -44,23 +45,29 @@ object Expressions:
         cmds.put("rev", st => st.reverse)
         cmds.put("roll", st => st.tail :+ st.head)
         cmds.put("rolln", st =>
-            val n = st.head.toInt
-            var out_st = st.tail
-            for _ <- 1 to n do
+            val a :: rest = st : @unchecked
+            var out_st = rest
+            for _ <- 1 to a.toInt do
                 out_st = out_st.tail :+ out_st.head
             out_st
         )
         cmds.put("rot", st => (st takeRight 1) ::: (st dropRight 1))
         cmds.put("rotn", st =>
-            val n = st.head.toInt
-            var out_st = st.tail
-            for _ <- 1 to n do
+            val a :: rest = st : @unchecked
+            var out_st = rest
+            for _ <- 1 to a.toInt do
                 out_st = (out_st takeRight 1) ::: (out_st dropRight 1)
             out_st
         )
-        cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
+        cmds.put("swap", st =>
+            val b :: a :: rest = st : @unchecked
+            a :: b :: rest
+        )
         cmds.put("take", _ take 1)
-        cmds.put("taken", st => st.tail take st.head.toInt)
+        cmds.put("taken", st =>
+            val a :: rest = st : @unchecked
+            rest take a.toInt
+        )
         /* ranges */
         cmds.put("io", st =>
             val a :: rest = st : @unchecked
@@ -150,10 +157,24 @@ object Expressions:
         )
 
         /*** output ***/
-        cmds.put("version", exp_version :: _)
+        cmds.put("--", st =>
+            println {cmds.keys.toList.sorted.mkString(" ")}
+            st
+        )
+        cmds.put("ascii", st =>
+            (0 to 255)
+            .filterNot {_.toChar.isControl}
+            .map {c => s"  '${c.toChar}' ${c.toInt}"}
+            .foreach {println}
+            st
+        )
+        cmds.put("version", st =>
+            println {s"  exp ${exp_version}"}
+            st
+        )
 
         /**
-         * special ops
+         *  special ops
          */
         val cmds_ops = HashSet[String]("[", "]", "_")
         def isSpecialOp(op: String): Boolean = cmds_ops contains op
@@ -193,6 +214,8 @@ object Expressions:
             case _ => op :: st // add value to stack
 
     def formatOutput(output: String): String =
+        if output.isEmpty then return ""
+
         (output split delim)
         .zipWithIndex
         .reverse

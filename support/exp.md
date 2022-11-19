@@ -1,8 +1,8 @@
 # exp
 
 ## features
+- `ascii` command
 - ~~range (`to` and `until`) commands~~
-- ~~implement `cmds.put("abs", Command.UnaryDouble, _.abs)`~~
 
 ## maintainability
--
+- ~~`cmds.put("abs", Command.UnaryDouble, _.abs)`~~
