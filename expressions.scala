@@ -4,7 +4,7 @@ object Expressions:
     @main def exp(args: String*): Unit =
         println(s"${ formatOutput(evaluateOps(args, List())) }")
 
-    val exp_version = "0.1.0e"
+    val exp_version = "0.2.0a"
     val delim = " "
 
     enum Command:
@@ -20,14 +20,18 @@ object Expressions:
             case _ => None
 
         /* support functions */
-        def unaryInt(f: Int => Int): String => String =
-            (a: String) => f(a.toInt).toString
-        def unaryDouble(f: Double => Double): String => String =
-            (a: String) => f(a.toDouble).toString
-        def binaryInt(f: (Int, Int) => Int): (String, String) => String =
-            (a: String, b: String) => f(a.toInt, b.toInt).toString
-        def binaryDouble(f: (Double, Double) => Double): (String, String) => String =
-            (a: String, b: String) => f(a.toDouble, b.toDouble).toString
+        def unaryInt(st: List[String])(f: Int => Int): List[String] =
+            val a :: rest = st : @unchecked
+            f(a.toInt).toString :: rest
+        def unaryDouble(st: List[String])(f: Double => Double): List[String] =
+            val a :: rest = st : @unchecked
+            f(a.toDouble).toString :: rest
+        def binaryInt(st: List[String])(f: (Int, Int) => Int): List[String] =
+            val b :: a :: rest = st : @unchecked
+            f(a.toInt, b.toInt).toString :: rest
+        def binaryDouble(st: List[String])(f: (Double, Double) => Double): List[String] =
+            val b :: a :: rest = st : @unchecked
+            f(a.toDouble, b.toDouble).toString :: rest
 
         /**
          * constant functions
@@ -42,101 +46,102 @@ object Expressions:
          * remove top element from top of stack and push result
          */
         val cmds_unary = HashMap[String, String => String]()
-        cmds_unary.put("!", unaryDouble {a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}})
-        cmds_unary.put("abs", unaryDouble {_.abs})
-        cmds_unary.put("ceil", unaryDouble {Math.ceil})
-        cmds_unary.put("chs", unaryDouble {-_})
-        cmds_unary.put("floor", unaryDouble {Math.floor})
-        cmds_unary.put("inv", unaryDouble {1 / _})
-        cmds_unary.put("sqrt", unaryDouble {Math.sqrt})
-        cmds_unary.put("round", unaryDouble {a => (Math round a).toDouble})
-        /* trigonometric functions */
-        cmds_unary.put("sin", unaryDouble {Math.sin})
-        cmds_unary.put("cos", unaryDouble {Math.cos})
-        cmds_unary.put("tan", unaryDouble {Math.tan})
-        cmds_unary.put("asin", unaryDouble {Math.asin})
-        cmds_unary.put("acos", unaryDouble {Math.acos})
-        cmds_unary.put("atan", unaryDouble {Math.atan})
-        /* logarithmic functions */
-        cmds_unary.put("ln", unaryDouble {Math.log})
-        cmds_unary.put("log2", unaryDouble {a => (Math log10 a) / (Math log10 2)})
-        cmds_unary.put("log", unaryDouble {Math.log10})
-        /* conversion functions */
-        cmds_unary.put("rad_deg", unaryDouble {Math.toDegrees})
-        cmds_unary.put("deg_rad", unaryDouble {Math.toRadians})
-        /* bitwise operations */
-        cmds_unary.put("not", unaryInt {~_})
+        //cmds_unary.put("!", unaryDouble {a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}})
+        //cmds_unary.put("abs", unaryDouble {Math.abs})
+        //cmds_unary.put("ceil", unaryDouble {Math.ceil})
+        //cmds_unary.put("chs", unaryDouble {-_})
+        //cmds_unary.put("floor", unaryDouble {Math.floor})
+        //cmds_unary.put("inv", unaryDouble {1 / _})
+        //cmds_unary.put("sqrt", unaryDouble {Math.sqrt})
+        //cmds_unary.put("round", unaryDouble {a => (Math round a).toDouble})
+        ///* trigonometric functions */
+        //cmds_unary.put("sin", unaryDouble {Math.sin})
+        //cmds_unary.put("cos", unaryDouble {Math.cos})
+        //cmds_unary.put("tan", unaryDouble {Math.tan})
+        //cmds_unary.put("asin", unaryDouble {Math.asin})
+        //cmds_unary.put("acos", unaryDouble {Math.acos})
+        //cmds_unary.put("atan", unaryDouble {Math.atan})
+        ///* logarithmic functions */
+        //cmds_unary.put("ln", unaryDouble {Math.log})
+        //cmds_unary.put("log2", unaryDouble {a => (Math log10 a) / (Math log10 2)})
+        //cmds_unary.put("log", unaryDouble {Math.log10})
+        ///* conversion functions */
+        //cmds_unary.put("rad_deg", unaryDouble {Math.toDegrees})
+        //cmds_unary.put("deg_rad", unaryDouble {Math.toRadians})
+        ///* bitwise operations */
+        //cmds_unary.put("not", unaryInt {~_})
 
         /**
          * binary functions (string, string => string)
          * remove two elements from top of stack and push result
          */
         val cmds_binary = HashMap[String, (String, String) => String]()
-        cmds_binary.put("+", binaryDouble {_ + _})
-        cmds_binary.put("-", binaryDouble {_ - _})
-        cmds_binary.put("x", binaryDouble {_ * _})
-        cmds_binary.put("/", binaryDouble {_ / _})
-        cmds_binary.put("^", binaryDouble {Math.pow})
-        cmds_binary.put("%", binaryDouble {_ % _})
-        cmds_binary.put("max", binaryDouble {Math.max})
-        cmds_binary.put("min", binaryDouble {Math.min})
-        /* logarithmic functions */
-        cmds_binary.put("logn", binaryDouble {(a, b) => (Math log10 a) / (Math log10 b)})
-        /* bitwise operations */
-        cmds_binary.put("and", binaryInt {_ & _})
-        cmds_binary.put("or", binaryInt {_ | _})
-        cmds_binary.put("xor", binaryInt {_ ^ _})
+        //cmds_binary.put("+", binaryDouble {_ + _})
+        //cmds_binary.put("-", binaryDouble {_ - _})
+        //cmds_binary.put("x", binaryDouble {_ * _})
+        //cmds_binary.put("/", binaryDouble {_ / _})
+        //cmds_binary.put("^", binaryDouble {Math.pow})
+        //cmds_binary.put("%", binaryDouble {_ % _})
+        //cmds_binary.put("max", binaryDouble {Math.max})
+        //cmds_binary.put("min", binaryDouble {Math.min})
+        ///* logarithmic functions */
+        //cmds_binary.put("logn", binaryDouble {(a, b) => (Math log10 a) / (Math log10 b)})
+        ///* bitwise operations */
+        //cmds_binary.put("and", binaryInt {_ & _})
+        //cmds_binary.put("or", binaryInt {_ | _})
+        //cmds_binary.put("xor", binaryInt {_ ^ _})
 
         /**
          * general (stack manipulation)
          */
         val cmds = HashMap[String, List[String] => List[String]]()
-        cmds.put("cls", st => Nil)
-        cmds.put("count", st => st.length.toString :: st)
-        cmds.put("dup", st => st.head :: st)
-        cmds.put("drop", _.tail)
-        cmds.put("dropn", st => st drop {st.head.toInt + 1})
-        cmds.put("io", st =>
-            (1 to st.head.toInt)
-            .reverse
-            .map {_.toString}
-            .toList ::: st.tail
-        )
-        cmds.put("map", _ map {op => evaluateOps(lambda, List[String](op))})
-        cmds.put("red", st =>
-            var out_st = st
-            for _ <- st.indices.tail do
-                out_st = (evaluateOps(lambda, out_st) split delim).toList
-            out_st
-        )
-        cmds.put("rev", st => st.reverse)
-        cmds.put("roll", st => st.tail :+ st.head)
-        cmds.put("rolln", st =>
-            val n = st.head.toInt
-            var out_st = st.tail
-            for _ <- 1 to n do
-                out_st = out_st.tail :+ out_st.head
-            out_st
-        )
-        cmds.put("rot", st => (st takeRight 1) ::: (st dropRight 1))
-        cmds.put("rotn", st =>
-            val n = st.head.toInt
-            var out_st = st.tail
-            for _ <- 1 to n do
-                out_st = (out_st takeRight 1) ::: (out_st dropRight 1)
-            out_st
-        )
-        cmds.put("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
-        cmds.put("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
-        cmds.put("store", st =>
-            val name :: value :: rem_st = st : @unchecked
-            mem.put(name, value) // store value string in hashmap
-            rem_st
-        )
-        cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
-        cmds.put("take", _ take 1)
-        cmds.put("taken", st => st.tail take st.head.toInt)
-        cmds.put("version", exp_version :: _)
+        cmds.put("abs", unaryDouble(_)(Math.abs))
+        //cmds.put("cls", st => Nil)
+        //cmds.put("count", st => st.length.toString :: st)
+        //cmds.put("dup", st => st.head :: st)
+        //cmds.put("drop", _.tail)
+        //cmds.put("dropn", st => st drop {st.head.toInt + 1})
+        //cmds.put("io", st =>
+        //    (1 to st.head.toInt)
+        //    .reverse
+        //    .map {_.toString}
+        //    .toList ::: st.tail
+        //)
+        //cmds.put("map", _ map {op => evaluateOps(lambda, List[String](op))})
+        //cmds.put("red", st =>
+        //    var out_st = st
+        //    for _ <- st.indices.tail do
+        //        out_st = (evaluateOps(lambda, out_st) split delim).toList
+        //    out_st
+        //)
+        //cmds.put("rev", st => st.reverse)
+        //cmds.put("roll", st => st.tail :+ st.head)
+        //cmds.put("rolln", st =>
+        //    val n = st.head.toInt
+        //    var out_st = st.tail
+        //    for _ <- 1 to n do
+        //        out_st = out_st.tail :+ out_st.head
+        //    out_st
+        //)
+        //cmds.put("rot", st => (st takeRight 1) ::: (st dropRight 1))
+        //cmds.put("rotn", st =>
+        //    val n = st.head.toInt
+        //    var out_st = st.tail
+        //    for _ <- 1 to n do
+        //        out_st = (out_st takeRight 1) ::: (out_st dropRight 1)
+        //    out_st
+        //)
+        //cmds.put("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
+        //cmds.put("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
+        //cmds.put("store", st =>
+        //    val name :: value :: rem_st = st : @unchecked
+        //    mem.put(name, value) // store value string in hashmap
+        //    rem_st
+        //)
+        //cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
+        //cmds.put("take", _ take 1)
+        //cmds.put("taken", st => st.tail take st.head.toInt)
+        //cmds.put("version", exp_version :: _)
 
         /**
          * special ops
