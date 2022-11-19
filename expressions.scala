@@ -41,12 +41,6 @@ object Expressions:
         cmds.put("dup", st => st.head :: st)
         cmds.put("drop", _.tail)
         cmds.put("dropn", st => st drop {st.head.toInt + 1})
-        cmds.put("io", st =>
-            (1 to st.head.toInt)
-            .reverse
-            .map {_.toString}
-            .toList ::: st.tail
-        )
         cmds.put("rev", st => st.reverse)
         cmds.put("roll", st => st.tail :+ st.head)
         cmds.put("rolln", st =>
@@ -67,7 +61,30 @@ object Expressions:
         cmds.put("swap", st => st.tail.head :: st.head :: st.tail.tail)
         cmds.put("take", _ take 1)
         cmds.put("taken", st => st.tail take st.head.toInt)
-        /* memory usage */
+        /* ranges */
+        cmds.put("io", st =>
+            val a :: rest = st : @unchecked
+            (1 to a.toInt)
+            .reverse
+            .map {_.toString}
+            .toList ::: rest
+        )
+        cmds.put("to", st =>
+            val c :: b :: a :: rest = st : @unchecked
+            (a.toInt to b.toInt by c.toInt)
+            .reverse
+            .map {_.toString}
+            .toList ::: rest
+        )
+        cmds.put("until", st =>
+            val c :: b :: a :: rest = st : @unchecked
+            (a.toInt until b.toInt by c.toInt)
+            .reverse
+            .map {_.toString}
+            .toList ::: rest
+        )
+
+        /*** memory usage ***/
         cmds.put("store", st =>
             val name :: value :: rem_st = st : @unchecked
             mem.put(name, value) // store value string in hashmap
@@ -134,7 +151,6 @@ object Expressions:
 
         /*** output ***/
         cmds.put("version", exp_version :: _)
-
 
         /**
          * special ops

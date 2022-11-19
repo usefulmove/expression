@@ -1,9 +1,8 @@
 # exp
 
 ## features
-- implement `cmds.put("abs", Command.UnaryDouble, _.abs)`
-- (?) range (`to` and `until`) commands
-
+- ~~range (`to` and `until`) commands~~
+- ~~implement `cmds.put("abs", Command.UnaryDouble, _.abs)`~~
 
 ## maintainability
 -
