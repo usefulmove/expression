@@ -83,13 +83,6 @@ object Expressions:
             .map {_.toString}
             .toList ::: rest
         )
-        cmds.put("until", st =>
-            val c :: b :: a :: rest = st : @unchecked
-            (a.toInt until b.toInt by c.toInt)
-            .reverse
-            .map {_.toString}
-            .toList ::: rest
-        )
 
         /*** memory usage ***/
         cmds.put("store", st =>
