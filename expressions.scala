@@ -193,7 +193,7 @@ object Expressions:
             st
         )
         cmds.put("version", st =>
-            println {s"  exp ${exp_version}"}
+            println {s"  expressions ${exp_version}"}
             st
         )
 
