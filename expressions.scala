@@ -3,7 +3,7 @@ import scala.collection.mutable.{HashMap, HashSet}
 object Expressions:
     @main def exp(args: String*): Unit =
         val output = formatOutput(evaluateOps(args, Nil))
-        if !output.isEmpty then println(s"  $output")
+        if !output.isEmpty then println(s"$output")
 
     val exp_version = "0.2.0a"
     val delim = " "
