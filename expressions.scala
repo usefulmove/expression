@@ -9,11 +9,11 @@ object Expressions:
     val delim = " "
 
     enum Command:
-        case General, Memory
+        case Standard, Memory
 
     object Command:
         def isCommand(op: String): Option[Command] = op match
-            case op if cmds contains op => Some(Command.General)
+            case op if cmds contains op => Some(Command.Standard)
             case op if mem contains op => Some(Command.Memory)
             case _ => None
 
@@ -233,7 +233,7 @@ object Expressions:
 
     def processOp(op: String, st: List[String]): List[String] =
         Command.isCommand(op) match
-            case Some(Command.General) => Command.cmds(op)(st)
+            case Some(Command.Standard) => Command.cmds(op)(st)
             case Some(Command.Memory) => mem(op) :: st
             case _ => op :: st // add value to stack
 
