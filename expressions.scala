@@ -107,9 +107,29 @@ object Expressions:
         cmds.put("inv", unaryDouble(_)(1 / _))
         cmds.put("max", binaryDouble(_)(Math.max))
         cmds.put("min", binaryDouble(_)(Math.min))
+        cmds.put("nroot", binaryDouble(_)((a, b) => Math.pow(a, 1.0 / b)))
         cmds.put("pi", Math.PI.toString :: _)
         cmds.put("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
+        cmds.put("proot", st =>
+            val sc :: sb :: sa :: rest = st : @unchecked
+            val (a, b, c) = (sa.toDouble, sb.toDouble, sc.toDouble)
+            val dsc = b * b - 4 * a * c // discriminant
+            val out = dsc < 0 match
+                case true =>
+                    val r1r = -b / (2 * a)
+                    val r1i = Math.sqrt(-dsc) / (2 * a)
+                    val r2r = r1r
+                    val r2i = -r1i
+                    List(r2i, r2r, r1i, r1r)
+                case _ =>
+                    val r1r = (-b + Math.sqrt(dsc)) / (2 * a)
+                    val r2r = (-b - Math.sqrt(dsc)) / (2 * a)
+                    val (r1i, r2i) = (0.0, 0.0)
+                    List(r2i, r2r, r1i, r1r)
+            (out map {_.toString}) ::: rest
+        )
         cmds.put("round", unaryDouble(_)(a => (Math round a).toDouble))
+        cmds.put("sgn", unaryDouble(_)(_.sign))
         cmds.put("sqrt", unaryDouble(_)(Math.sqrt))
         cmds.put("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
 
@@ -131,11 +151,22 @@ object Expressions:
         /*** conversion functions ***/
         cmds.put("rad_deg", unaryDouble(_)(Math.toDegrees))
         cmds.put("deg_rad", unaryDouble(_)(Math.toRadians))
+        cmds.put("dec_bin", st =>
+            val a :: rest = st : @unchecked
+            a.toInt.toBinaryString :: rest
+        )
+        cmds.put("bin_dec", st =>
+            val a :: rest = st : @unchecked
+            Integer.parseInt(a, 2).toString :: rest
+        )
 
         /*** bit operations ***/
         cmds.put("and", binaryInt(_)(_ & _))
+        cmds.put("nand", binaryInt(_)((a, b) => ~(a & b)))
         cmds.put("not", unaryInt(_)(~_))
+        cmds.put("ones", unaryInt(_)(Integer.bitCount))
         cmds.put("or", binaryInt(_)(_ | _))
+        cmds.put("nor", binaryInt(_)((a, b) => ~(a | b)))
         cmds.put("xor", binaryInt(_)(_ ^ _))
 
         /*** RGB colors (?) ***/
