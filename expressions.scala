@@ -37,46 +37,46 @@ object Expressions:
         val cmds = HashMap[String, List[String] => List[String]]()
 
         /*** stack manipulation ***/
-        cmds.put("cls", st => Nil)
-        cmds.put("count", st => st.length.toString :: st)
-        cmds.put("dup", st => st.head :: st)
-        cmds.put("drop", _.tail)
-        cmds.put("dropn", st => st drop {st.head.toInt + 1})
-        cmds.put("rev", st => st.reverse)
-        cmds.put("roll", st => st.tail :+ st.head)
-        cmds.put("rolln", st =>
+        cmds put ("cls", st => Nil)
+        cmds put ("count", st => st.length.toString :: st)
+        cmds put ("dup", st => st.head :: st)
+        cmds put ("drop", _.tail)
+        cmds put ("dropn", st => st drop {st.head.toInt + 1})
+        cmds put ("rev", st => st.reverse)
+        cmds put ("roll", st => st.tail :+ st.head)
+        cmds put ("rolln", st =>
             val a :: rest = st : @unchecked
             var out_st = rest
             for _ <- 1 to a.toInt do
                 out_st = out_st.tail :+ out_st.head
             out_st
         )
-        cmds.put("rot", st => (st takeRight 1) ::: (st dropRight 1))
-        cmds.put("rotn", st =>
+        cmds put ("rot", st => (st takeRight 1) ::: (st dropRight 1))
+        cmds put ("rotn", st =>
             val a :: rest = st : @unchecked
             var out_st = rest
             for _ <- 1 to a.toInt do
                 out_st = (out_st takeRight 1) ::: (out_st dropRight 1)
             out_st
         )
-        cmds.put("swap", st =>
+        cmds put ("swap", st =>
             val b :: a :: rest = st : @unchecked
             a :: b :: rest
         )
-        cmds.put("take", _ take 1)
-        cmds.put("taken", st =>
+        cmds put ("take", _ take 1)
+        cmds put ("taken", st =>
             val a :: rest = st : @unchecked
             rest take a.toInt
         )
         /* ranges */
-        cmds.put("io", st =>
+        cmds put ("io", st =>
             val a :: rest = st : @unchecked
             (1 to a.toInt)
             .reverse
             .map {_.toString}
             .toList ::: rest
         )
-        cmds.put("to", st =>
+        cmds put ("to", st =>
             val c :: b :: a :: rest = st : @unchecked
             (a.toInt to b.toInt by c.toInt)
             .reverse
@@ -85,32 +85,32 @@ object Expressions:
         )
 
         /*** memory usage ***/
-        cmds.put("store", st =>
+        cmds put ("store", st =>
             val name :: value :: rem_st = st : @unchecked
             mem.put(name, value) // store value string in hashmap
             rem_st
         )
 
         /*** maths operations ***/
-        cmds.put("+", binaryDouble(_)(_ + _))
-        cmds.put("-", binaryDouble(_)(_ - _))
-        cmds.put("x", binaryDouble(_)(_ * _))
-        cmds.put("/", binaryDouble(_)(_ / _))
-        cmds.put("!", unaryDouble(_)(a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}))
-        cmds.put("^", binaryDouble(_)(Math.pow))
-        cmds.put("%", binaryDouble(_)(_ % _))
-        cmds.put("abs", unaryDouble(_)(Math.abs))
-        cmds.put("ceil", unaryDouble(_)(Math.ceil))
-        cmds.put("chs", unaryDouble(_)(-_))
-        cmds.put("e", Math.E.toString :: _)
-        cmds.put("floor", unaryDouble(_)(Math.floor))
-        cmds.put("inv", unaryDouble(_)(1 / _))
-        cmds.put("max", binaryDouble(_)(Math.max))
-        cmds.put("min", binaryDouble(_)(Math.min))
-        cmds.put("nroot", binaryDouble(_)((a, b) => Math.pow(a, 1.0 / b)))
-        cmds.put("pi", Math.PI.toString :: _)
-        cmds.put("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
-        cmds.put("proot", st =>
+        cmds put ("+", binaryDouble(_)(_ + _))
+        cmds put ("-", binaryDouble(_)(_ - _))
+        cmds put ("x", binaryDouble(_)(_ * _))
+        cmds put ("/", binaryDouble(_)(_ / _))
+        cmds put ("!", unaryDouble(_)(a => ((1 to a.toInt) foldLeft 1.0) {_ * _.toDouble}))
+        cmds put ("^", binaryDouble(_)(Math.pow))
+        cmds put ("%", binaryDouble(_)(_ % _))
+        cmds put ("abs", unaryDouble(_)(Math.abs))
+        cmds put ("ceil", unaryDouble(_)(Math.ceil))
+        cmds put ("chs", unaryDouble(_)(-_))
+        cmds put ("e", Math.E.toString :: _)
+        cmds put ("floor", unaryDouble(_)(Math.floor))
+        cmds put ("inv", unaryDouble(_)(1 / _))
+        cmds put ("max", binaryDouble(_)(Math.max))
+        cmds put ("min", binaryDouble(_)(Math.min))
+        cmds put ("nroot", binaryDouble(_)((a, b) => Math.pow(a, 1.0 / b)))
+        cmds put ("pi", Math.PI.toString :: _)
+        cmds put ("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
+        cmds put ("proot", st =>
             val sc :: sb :: sa :: rest = st : @unchecked
             val (a, b, c) = (sa.toDouble, sb.toDouble, sc.toDouble)
             val dsc = b * b - 4 * a * c // discriminant
@@ -128,52 +128,62 @@ object Expressions:
                     List(r2i, r2r, r1i, r1r)
             (out map {_.toString}) ::: rest
         )
-        cmds.put("round", unaryDouble(_)(a => (Math round a).toDouble))
-        cmds.put("sgn", unaryDouble(_)(_.sign))
-        cmds.put("sqrt", unaryDouble(_)(Math.sqrt))
-        cmds.put("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
+        cmds put ("round", unaryDouble(_)(a => (Math round a).toDouble))
+        cmds put ("sgn", unaryDouble(_)(_.sign))
+        cmds put ("sqrt", unaryDouble(_)(Math.sqrt))
+        cmds put ("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
 
         /* trigonometric functions */
-        cmds.put("sin", unaryDouble(_)(Math.sin))
-        cmds.put("cos", unaryDouble(_)(Math.cos))
-        cmds.put("tan", unaryDouble(_)(Math.tan))
-        cmds.put("asin", unaryDouble(_)(Math.asin))
-        cmds.put("acos", unaryDouble(_)(Math.acos))
-        cmds.put("atan", unaryDouble(_)(Math.atan))
+        cmds put ("sin", unaryDouble(_)(Math.sin))
+        cmds put ("cos", unaryDouble(_)(Math.cos))
+        cmds put ("tan", unaryDouble(_)(Math.tan))
+        cmds put ("asin", unaryDouble(_)(Math.asin))
+        cmds put ("acos", unaryDouble(_)(Math.acos))
+        cmds put ("atan", unaryDouble(_)(Math.atan))
         /* logarithmic functions */
-        cmds.put("ln", unaryDouble(_)(Math.log))
-        cmds.put("log", unaryDouble(_)(Math.log10))
-        cmds.put("log2", unaryDouble(_)(a => (Math log10 a) / (Math log10 2)))
-        cmds.put("logn", binaryDouble(_)((a, b) => (Math log10 a) / (Math log10 b)))
+        cmds put ("ln", unaryDouble(_)(Math.log))
+        cmds put ("log", unaryDouble(_)(Math.log10))
+        cmds put ("log2", unaryDouble(_)(a => (Math log10 a) / (Math log10 2)))
+        cmds put ("logn", binaryDouble(_)((a, b) => (Math log10 a) / (Math log10 b)))
 
         /*** control flow (?) ***/
 
         /*** conversion functions ***/
-        cmds.put("rad_deg", unaryDouble(_)(Math.toDegrees))
-        cmds.put("deg_rad", unaryDouble(_)(Math.toRadians))
-        cmds.put("dec_bin", st =>
+        /* degrees to radians */
+        cmds put ("deg_rad", unaryDouble(_)(Math.toRadians))
+        cmds put ("rad_deg", unaryDouble(_)(Math.toDegrees))
+        /* decimal to binary to hexadecimal */
+        cmds put ("dec_bin", st =>
             val a :: rest = st : @unchecked
             a.toInt.toBinaryString :: rest
         )
-        cmds.put("bin_dec", st =>
+        cmds put ("bin_dec", st =>
             val a :: rest = st : @unchecked
             Integer.parseInt(a, 2).toString :: rest
         )
+        cmds put ("dec_hex", st =>
+            val a :: rest = st : @unchecked
+            a.toInt.toHexString :: rest
+        )
+        cmds put ("hex_dec", st =>
+            val a :: rest = st : @unchecked
+            Integer.parseInt(a, 16).toString :: rest
+        )
 
         /*** bit operations ***/
-        cmds.put("and", binaryInt(_)(_ & _))
-        cmds.put("nand", binaryInt(_)((a, b) => ~(a & b)))
-        cmds.put("not", unaryInt(_)(~_))
-        cmds.put("ones", unaryInt(_)(Integer.bitCount))
-        cmds.put("or", binaryInt(_)(_ | _))
-        cmds.put("nor", binaryInt(_)((a, b) => ~(a | b)))
-        cmds.put("xor", binaryInt(_)(_ ^ _))
+        cmds put ("and", binaryInt(_)(_ & _))
+        cmds put ("nand", binaryInt(_)((a, b) => ~(a & b)))
+        cmds put ("not", unaryInt(_)(~_))
+        cmds put ("ones", unaryInt(_)(Integer.bitCount))
+        cmds put ("or", binaryInt(_)(_ | _))
+        cmds put ("nor", binaryInt(_)((a, b) => ~(a | b)))
+        cmds put ("xor", binaryInt(_)(_ ^ _))
 
         /*** RGB colors (?) ***/
 
         /*** higher order functions ***/
-        cmds.put("map", _ map {op => evaluateOps(lambda, List[String](op))})
-        cmds.put("red", st =>
+        cmds put ("map", _ map {op => evaluateOps(lambda, List[String](op))})
+        cmds put ("red", st =>
             var out_st = st
             for _ <- st.indices.tail do
                 out_st = (evaluateOps(lambda, out_st) split delim).toList
@@ -181,18 +191,18 @@ object Expressions:
         )
 
         /*** output ***/
-        cmds.put("--", st =>
+        cmds put ("--", st =>
             println {cmds.keys.toList.sorted.mkString(" ")}
             st
         )
-        cmds.put("ascii", st =>
+        cmds put ("ascii", st =>
             (0 to 255)
             .filterNot {_.toChar.isControl}
             .map {c => s"  '${c.toChar}' ${c.toInt}"}
             .foreach {println}
             st
         )
-        cmds.put("version", st =>
+        cmds put ("version", st =>
             println {s"  expressions ${exp_version}"}
             st
         )
