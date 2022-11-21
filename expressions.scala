@@ -169,6 +169,12 @@ object Expressions:
             val a :: rest = st : @unchecked
             Integer.parseInt(a, 16).toString :: rest
         )
+        /* temperature */
+        cmds put ("c_f", unaryDouble(_)(_ * 9.0 / 5.0 + 32.0))
+        cmds put ("f_c", unaryDouble(_)(a => (a - 32.0) * 5.0 / 9.0))
+        /* distances */
+        cmds put ("ft_m", unaryDouble(_)(_ * 0.3048))
+        cmds put ("m_ft", unaryDouble(_)(_ / 0.3048))
 
         /*** bit operations ***/
         cmds put ("and", binaryInt(_)(_ & _))
