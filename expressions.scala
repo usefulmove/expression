@@ -198,7 +198,7 @@ object Expressions:
 
         /*** output ***/
         cmds put ("--", st =>
-            println {cmds.keys.toList.sorted.mkString(" ")}
+            println {cmds.keys.toList.sorted mkString " "}
             st
         )
         cmds put ("ascii", st =>
@@ -206,7 +206,7 @@ object Expressions:
                 .filterNot {_.toChar.isControl}
                 .map {c => s"('${c.toChar}' ${c.toInt})"} // "('é'  233")
                 .mkString("   ")
-            println(out)
+            println {out}
 
             st
         )
