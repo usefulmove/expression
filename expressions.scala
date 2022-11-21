@@ -204,7 +204,7 @@ object Expressions:
         cmds put ("ascii", st =>
             val out = (0 to 255)
                 .filterNot {_.toChar.isControl}
-                .map {c => s"'${c.toChar}' ${c.toInt}"} // "'é'  233"
+                .map {c => s"('${c.toChar}' ${c.toInt})"} // "('é'  233")
                 .mkString("   ")
             println(out)
 
