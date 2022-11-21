@@ -202,10 +202,12 @@ object Expressions:
             st
         )
         cmds put ("ascii", st =>
-            (0 to 255)
-            .filterNot {_.toChar.isControl}
-            .map {c => s"  '${c.toChar}' ${c.toInt}"}
-            .foreach {println}
+            val out = (0 to 255)
+                .filterNot {_.toChar.isControl}
+                .map {c => s"'${c.toChar}' ${c.toInt}"} // "'é'  233"
+                .mkString("   ")
+            println(out)
+
             st
         )
         cmds put ("version", st =>
