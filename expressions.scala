@@ -128,6 +128,10 @@ object Expressions:
                     List(r2i, r2r, r1i, r1r)
             (out map {_.toString}) ::: rest
         )
+        cmds put ("rand", unaryInt(_)(a =>
+            val rand = scala.util.Random
+            rand.between(1, a + 1)
+        ))
         cmds put ("round", unaryDouble(_)(a => (Math round a).toDouble))
         cmds put ("sgn", unaryDouble(_)(_.sign))
         cmds put ("sqrt", unaryDouble(_)(Math.sqrt))
