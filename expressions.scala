@@ -107,6 +107,12 @@ object Expressions:
         cmds put ("inv", unaryDouble(_)(1 / _))
         cmds put ("max", binaryDouble(_)(Math.max))
         cmds put ("min", binaryDouble(_)(Math.min))
+        cmds put ("minmax", st =>
+            (st foldLeft List(Double.MinValue, Double.MaxValue)) {(acc, s) =>
+                val n = s.toDouble
+                List(n max acc(0), n min acc(1))
+            } map {_.toString}
+        )
         cmds put ("nroot", binaryDouble(_)((a, b) => Math.pow(a, 1.0 / b)))
         cmds put ("pi", Math.PI.toString :: _)
         cmds put ("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
