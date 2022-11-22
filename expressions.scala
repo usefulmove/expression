@@ -3,7 +3,7 @@ import scala.collection.mutable.{HashMap, HashSet}
 object Expressions:
     @main def exp(args: String*): Unit =
         val output = formatOutput(evaluateOps(args, Nil))
-        if !output.isEmpty then println(s"$output")
+        if !output.isEmpty then println {s"$output"}
 
     val exp_version = "0.2.0a"
     val delim = " "
@@ -198,11 +198,11 @@ object Expressions:
         /*** RGB colors (?) ***/
 
         /*** higher order functions ***/
-        cmds put ("map", _ map {op => evaluateOps(lambda, List[String](op))})
+        cmds put ("map", _ map {op => evaluateOps(λ, List[String](op))})
         cmds put ("red", st =>
             var out_st = st
             for _ <- st.indices.tail do
-                out_st = (evaluateOps(lambda, out_st) split delim).toList
+                out_st = (evaluateOps(λ, out_st) split delim).toList
             out_st
         )
 
@@ -226,12 +226,14 @@ object Expressions:
         )
 
         /**
-         *  special ops
+         *  special operations
          */
-        val cmds_ops = HashSet[String]("[", "]", "_")
-        def isSpecialOp(op: String): Boolean = cmds_ops contains op
+        val special_ops = HashSet[String]("[", "]", "_")
+        def isSpecialOp(op: String): Boolean = special_ops contains op
 
-    var lambda = Seq[String]() // anonymous function (function literal)
+    end Command
+
+    var λ = Seq[String]() // anonymous function (function literal)
     var mem = HashMap[String, String]() // variable memory
 
     def evaluateOps(ops: Seq[String], st: List[String]): String =
@@ -242,19 +244,19 @@ object Expressions:
                     !recording match
                         case true => processOp(op, acc)
                         case _ => // recording
-                            lambda = lambda :+ op // append op to stored anonymous function
+                            λ = λ :+ op // append op to stored anonymous function
                             acc
                 case _ => // special op
                     op match
                         case "[" => // start recording anonymous function
-                            lambda = Seq()
+                            λ = Seq()
                             recording = true
                             acc
                         case "]" => // stop recording
                             recording = false
                             acc
                         case "_" => // evaluate anonymous function on current stack
-                            (evaluateOps(lambda, acc) split delim).toList
+                            (evaluateOps(λ, acc) split delim).toList
                         case _ => throw new Exception("unknown special op: " + op)
         }
         out_st mkString delim
