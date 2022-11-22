@@ -233,7 +233,7 @@ object Expressions:
 
     end Command
 
-    var λ = Seq[String]() // anonymous function (function literal)
+    var λ = Seq[String]() // anonymous (lambda) function
     var mem = HashMap[String, String]() // variable memory
 
     def evaluateOps(ops: Seq[String], st: List[String]): String =
