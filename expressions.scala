@@ -12,10 +12,11 @@ object Expressions:
         case Standard, Memory
 
     object Command:
-        def isCommand(op: String): Option[Command] = op match
-            case op if cmds contains op => Some(Command.Standard)
-            case op if mem contains op => Some(Command.Memory)
-            case _ => None
+        def isCommand(op: String): Option[Command] =
+            op match
+                case op if cmds contains op => Some(Command.Standard)
+                case op if mem contains op => Some(Command.Memory)
+                case _ => None
 
         /* support functions */
         def unaryInt(st: List[String])(f: Int => Int): List[String] =
@@ -120,16 +121,16 @@ object Expressions:
             val sc :: sb :: sa :: rest = st : @unchecked
             val (a, b, c) = (sa.toDouble, sb.toDouble, sc.toDouble)
             val dsc = b * b - 4 * a * c // discriminant
-            val out = dsc < 0 match
-                case true =>
+            val out = Math signum dsc match
+                case -1 =>
                     val r1r = -b / (2 * a)
-                    val r1i = Math.sqrt(-dsc) / (2 * a)
+                    val r1i = (Math sqrt -dsc) / (2 * a)
                     val r2r = r1r
                     val r2i = -r1i
                     List(r2i, r2r, r1i, r1r)
                 case _ =>
-                    val r1r = (-b + Math.sqrt(dsc)) / (2 * a)
-                    val r2r = (-b - Math.sqrt(dsc)) / (2 * a)
+                    val r1r = (-b + (Math sqrt dsc)) / (2 * a)
+                    val r2r = (-b - (Math sqrt dsc)) / (2 * a)
                     val (r1i, r2i) = (0.0, 0.0)
                     List(r2i, r2r, r1i, r1r)
             (out map {_.toString}) ::: rest
@@ -239,30 +240,28 @@ object Expressions:
     def evaluateOps(ops: Seq[String], st: List[String]): String =
         var recording = false
         val out_st = (ops foldLeft st) {(acc, op) =>
-            !Command.isSpecialOp(op) match
+            !(Command isSpecialOp op) match
                 case true => // general case
                     !recording match
                         case true => processOp(op, acc)
                         case _ => // recording
                             λ = λ :+ op // append op to stored anonymous function
                             acc
-                case _ => // special op
-                    op match
-                        case "[" => // start recording anonymous function
-                            λ = Seq()
-                            recording = true
-                            acc
-                        case "]" => // stop recording
-                            recording = false
-                            acc
-                        case "_" => // evaluate anonymous function on current stack
-                            (evaluateOps(λ, acc) split delim).toList
-                        case _ => throw new Exception("unknown special op: " + op)
+                case _ => op match // special op
+                    case "[" => // start recording anonymous function
+                        λ = Seq()
+                        recording = true
+                        acc
+                    case "]" => // stop recording
+                        recording = false
+                        acc
+                    case "_" => (evaluateOps(λ, acc) split delim).toList // evaluate anonymous function
+                    case _ => throw new Exception("unknown special op: " + op)
         }
         out_st mkString delim
 
     def processOp(op: String, st: List[String]): List[String] =
-        Command.isCommand(op) match
+        (Command isCommand op) match
             case Some(Command.Standard) => Command.cmds(op)(st)
             case Some(Command.Memory) => mem(op) :: st
             case _ => op :: st // add value to stack
