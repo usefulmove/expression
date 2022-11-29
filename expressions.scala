@@ -5,7 +5,7 @@ object Expressions:
         val output = formatOutput(evaluateOps(args, Nil))
         if !output.isEmpty then println {s"$output"}
 
-    val exp_version = "0.2.0a"
+    val exp_version = "0.2.0b"
     val delim = " "
 
     enum Command:
@@ -86,11 +86,12 @@ object Expressions:
         )
 
         /*** memory usage ***/
-        cmds put ("store", st =>
-            val name :: value :: rem_st = st : @unchecked
-            mem.put(name, value) // store value string in hashmap
+        cmds put ("assign", st =>
+            val key :: value :: rem_st = st : @unchecked
+            mem.put(key, value) // assign value to string in hashmap
             rem_st
         )
+        cmds put ("store", cmds("assign"))
 
         /*** maths operations ***/
         cmds put ("+", binaryDouble(_)(_ + _))
