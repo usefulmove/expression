@@ -200,7 +200,7 @@ object Expressions:
 
         /*** higher order functions ***/
         cmds put ("map", _ map {op => evaluateOps(λ, List[String](op))})
-        cmds put ("red", st =>
+        cmds put ("fold", st =>
             var out_st = st
             for _ <- st.indices.tail do
                 out_st = (evaluateOps(λ, out_st) split delim).toList
