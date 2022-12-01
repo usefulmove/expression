@@ -5,5 +5,6 @@
 - `mean` (?)
 - functions
 - read files
+- `filter` (?)
 
 ## maintainability
