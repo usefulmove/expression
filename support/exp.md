@@ -1,10 +1,10 @@
 # exp
 
 ## features
-- `scan` (?)
+- ~~`scan`~~ (?)
 - `mean` (?)
-- functions
-- read files
+- functions (?)
+- read files (?)
 - `filter` (?)
 
 ## maintainability
