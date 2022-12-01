@@ -1,7 +1,9 @@
 # exp
 
 ## features
-- add `scan` (?)
-- add `mean` (?)
+- `scan` (?)
+- `mean` (?)
+- functions
+- read files
 
 ## maintainability
