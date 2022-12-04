@@ -5,7 +5,7 @@ object Expressions:
         val output = formatOutput(evaluateOps(args, Nil))
         if !output.isEmpty then println {s"$output"}
 
-    val exp_version = "0.2.0c"
+    val exp_version = "0.2.2c"
     val delim = " "
 
     enum Command:
@@ -105,6 +105,7 @@ object Expressions:
         cmds put ("ceil", unaryDouble(_)(Math.ceil))
         cmds put ("chs", unaryDouble(_)(-_))
         cmds put ("e", Math.E.toString :: _)
+        cmds put ("frac", unaryDouble(_)(a => a - Math.floor(a)))
         cmds put ("floor", unaryDouble(_)(Math.floor))
         cmds put ("inv", unaryDouble(_)(1 / _))
         cmds put ("max", binaryDouble(_)(Math.max))
@@ -225,6 +226,14 @@ object Expressions:
         cmds put ("version", stck =>
             println {s"  expressions ${exp_version}"}
             stck
+        )
+
+        /*** finance ***/
+        cmds put ("pin_f", stck => // future value
+            val sc :: sb :: sa :: rest = stck : @unchecked
+            val (p, i, n) = (sa.toDouble, sb.toDouble, sc.toDouble)
+            val out = p * Math.pow(1 + i, n)
+            out.toString :: rest
         )
 
         /**
