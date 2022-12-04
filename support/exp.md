@@ -1,7 +1,7 @@
 # exp
 
 ## features
-- ~~`scan`~~ (?)
+- time value of money (?)
 - `mean` (?)
 - functions (?)
 - read files (?)
