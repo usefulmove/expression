@@ -229,10 +229,16 @@ object Expressions:
         )
 
         /*** finance ***/
-        cmds put ("pin_f", stck => // future value
+        cmds put ("cmpnd", stck => // future value (compound interest)
             val sc :: sb :: sa :: rest = stck : @unchecked
-            val (p, i, n) = (sa.toDouble, sb.toDouble, sc.toDouble)
-            val out = p * Math.pow(1 + i, n)
+            val (presentValue, interestRate, numPeriods) = (sa.toDouble, sb.toDouble, sc.toDouble)
+            val out = presentValue * Math.pow(1 + interestRate, numPeriods)
+            out.toString :: rest
+        )
+        cmds put ("pmt", stck => // future value (payments)
+            val sc :: sb :: sa :: rest = stck : @unchecked
+            val (paymentAmount, interestRate, numPeriods) = (sa.toDouble, -sb.toDouble, sc.toDouble)
+            val out = paymentAmount * (1 - Math.pow(1 + interestRate, -numPeriods)) / interestRate
             out.toString :: rest
         )
 
