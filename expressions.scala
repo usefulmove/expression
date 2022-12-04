@@ -5,7 +5,7 @@ object Expressions:
         val output = formatOutput(evaluateOps(args, Nil))
         if !output.isEmpty then println {s"$output"}
 
-    val exp_version = "0.2.0b"
+    val exp_version = "0.2.0c"
     val delim = " "
 
     enum Command:
@@ -19,17 +19,17 @@ object Expressions:
                 case _ => None
 
         /* support functions */
-        def unaryInt(st: List[String])(f: Int => Int): List[String] =
-            val a :: rest = st : @unchecked
+        def unaryInt(stck: List[String])(f: Int => Int): List[String] =
+            val a :: rest = stck : @unchecked
             f(a.toInt).toString :: rest
-        def unaryDouble(st: List[String])(f: Double => Double): List[String] =
-            val a :: rest = st : @unchecked
+        def unaryDouble(stck: List[String])(f: Double => Double): List[String] =
+            val a :: rest = stck : @unchecked
             f(a.toDouble).toString :: rest
-        def binaryInt(st: List[String])(f: (Int, Int) => Int): List[String] =
-            val b :: a :: rest = st : @unchecked
+        def binaryInt(stck: List[String])(f: (Int, Int) => Int): List[String] =
+            val b :: a :: rest = stck : @unchecked
             f(a.toInt, b.toInt).toString :: rest
-        def binaryDouble(st: List[String])(f: (Double, Double) => Double): List[String] =
-            val b :: a :: rest = st : @unchecked
+        def binaryDouble(stck: List[String])(f: (Double, Double) => Double): List[String] =
+            val b :: a :: rest = stck : @unchecked
             f(a.toDouble, b.toDouble).toString :: rest
 
         /**
@@ -38,47 +38,47 @@ object Expressions:
         val cmds = HashMap[String, List[String] => List[String]]()
 
         /*** stack manipulation ***/
-        cmds put ("cls", st => Nil)
-        cmds put ("count", st => st.length.toString :: st)
-        cmds put ("dup", st => st.head :: st)
+        cmds put ("cls", stck => Nil)
+        cmds put ("count", stck => stck.length.toString :: stck)
+        cmds put ("dup", stck => stck.head :: stck)
         cmds put ("drop", _.tail)
-        cmds put ("dropn", st => st drop {st.head.toInt + 1})
-        cmds put ("rev", st => st.reverse)
-        cmds put ("roll", st => st.tail :+ st.head)
-        cmds put ("rolln", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("dropn", stck => stck drop {stck.head.toInt + 1})
+        cmds put ("rev", stck => stck.reverse)
+        cmds put ("roll", stck => stck.tail :+ stck.head)
+        cmds put ("rolln", stck =>
+            val a :: rest = stck : @unchecked
             var out_st = rest
             for _ <- 1 to a.toInt do
                 out_st = out_st.tail :+ out_st.head
             out_st
         )
-        cmds put ("rot", st => (st takeRight 1) ::: (st dropRight 1))
-        cmds put ("rotn", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("rot", stck => (stck takeRight 1) ::: (stck dropRight 1))
+        cmds put ("rotn", stck =>
+            val a :: rest = stck : @unchecked
             var out_st = rest
             for _ <- 1 to a.toInt do
                 out_st = (out_st takeRight 1) ::: (out_st dropRight 1)
             out_st
         )
-        cmds put ("swap", st =>
-            val b :: a :: rest = st : @unchecked
+        cmds put ("swap", stck =>
+            val b :: a :: rest = stck : @unchecked
             a :: b :: rest
         )
         cmds put ("take", _ take 1)
-        cmds put ("taken", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("taken", stck =>
+            val a :: rest = stck : @unchecked
             rest take a.toInt
         )
         /* ranges */
-        cmds put ("io", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("io", stck =>
+            val a :: rest = stck : @unchecked
             (1 to a.toInt)
             .reverse
             .map {_.toString}
             .toList ::: rest
         )
-        cmds put ("to", st =>
-            val c :: b :: a :: rest = st : @unchecked
+        cmds put ("to", stck =>
+            val c :: b :: a :: rest = stck : @unchecked
             (a.toInt to b.toInt by c.toInt)
             .reverse
             .map {_.toString}
@@ -86,8 +86,8 @@ object Expressions:
         )
 
         /*** memory usage ***/
-        cmds put ("assign", st =>
-            val key :: value :: rem_st = st : @unchecked
+        cmds put ("assign", stck =>
+            val key :: value :: rem_st = stck : @unchecked
             mem.put(key, value) // assign value to string in hashmap
             rem_st
         )
@@ -109,17 +109,17 @@ object Expressions:
         cmds put ("inv", unaryDouble(_)(1 / _))
         cmds put ("max", binaryDouble(_)(Math.max))
         cmds put ("min", binaryDouble(_)(Math.min))
-        cmds put ("minmax", st =>
-            (st foldLeft List(Double.MinValue, Double.MaxValue)) {(acc, s) =>
+        cmds put ("minmax", stck =>
+            (stck foldLeft List(Double.MinValue, Double.MaxValue)) {(acc, s) =>
                 val n = s.toDouble
                 List(n max acc(0), n min acc(1))
             } map {_.toString}
         )
         cmds put ("nroot", binaryDouble(_)((a, b) => Math.pow(a, 1.0 / b)))
         cmds put ("pi", Math.PI.toString :: _)
-        cmds put ("prod", st => List((st foldLeft 1.0){_ * _.toDouble}.toString))
-        cmds put ("proot", st =>
-            val sc :: sb :: sa :: rest = st : @unchecked
+        cmds put ("prod", stck => List((stck foldLeft 1.0){_ * _.toDouble}.toString))
+        cmds put ("proot", stck =>
+            val sc :: sb :: sa :: rest = stck : @unchecked
             val (a, b, c) = (sa.toDouble, sb.toDouble, sc.toDouble)
             val dsc = b * b - 4 * a * c // discriminant
             val out = Math signum dsc match
@@ -143,7 +143,7 @@ object Expressions:
         cmds put ("round", unaryDouble(_)(a => (Math round a).toDouble))
         cmds put ("sgn", unaryDouble(_)(_.sign))
         cmds put ("sqrt", unaryDouble(_)(Math.sqrt))
-        cmds put ("sum", st => List((st foldLeft 0.0){_ + _.toDouble}.toString))
+        cmds put ("sum", stck => List((stck foldLeft 0.0){_ + _.toDouble}.toString))
 
         /* trigonometric functions */
         cmds put ("sin", unaryDouble(_)(Math.sin))
@@ -165,20 +165,20 @@ object Expressions:
         cmds put ("deg_rad", unaryDouble(_)(Math.toRadians))
         cmds put ("rad_deg", unaryDouble(_)(Math.toDegrees))
         /* decimal to binary to hexadecimal */
-        cmds put ("dec_bin", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("dec_bin", stck =>
+            val a :: rest = stck : @unchecked
             a.toInt.toBinaryString :: rest
         )
-        cmds put ("bin_dec", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("bin_dec", stck =>
+            val a :: rest = stck : @unchecked
             Integer.parseInt(a, 2).toString :: rest
         )
-        cmds put ("dec_hex", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("dec_hex", stck =>
+            val a :: rest = stck : @unchecked
             a.toInt.toHexString :: rest
         )
-        cmds put ("hex_dec", st =>
-            val a :: rest = st : @unchecked
+        cmds put ("hex_dec", stck =>
+            val a :: rest = stck : @unchecked
             Integer.parseInt(a, 16).toString :: rest
         )
         /* temperature */
@@ -201,30 +201,30 @@ object Expressions:
 
         /*** higher order functions ***/
         cmds put ("map", _ map {op => evaluateOps(λ, List[String](op))})
-        cmds put ("fold", st =>
-            var out_st = st
-            for _ <- st.indices.tail do
+        cmds put ("fold", stck =>
+            var out_st = stck
+            for _ <- stck.indices.tail do
                 out_st = (evaluateOps(λ, out_st) split delim).toList
             out_st
         )
 
         /*** output ***/
-        cmds put ("--", st =>
+        cmds put ("--", stck =>
             println {cmds.keys.toList.sorted mkString " "}
-            st
+            stck
         )
-        cmds put ("ascii", st =>
+        cmds put ("ascii", stck =>
             val out = (0 to 255)
                 .filterNot {_.toChar.isControl}
                 .map {c => s"('${c.toChar}' ${c.toInt})"} // "('é'  233")
                 .mkString("   ")
             println {out}
 
-            st
+            stck
         )
-        cmds put ("version", st =>
+        cmds put ("version", stck =>
             println {s"  expressions ${exp_version}"}
-            st
+            stck
         )
 
         /**
@@ -238,9 +238,9 @@ object Expressions:
     var λ = Seq[String]() // anonymous (lambda) function
     var mem = HashMap[String, String]() // variable memory
 
-    def evaluateOps(ops: Seq[String], st: List[String]): String =
+    def evaluateOps(ops: Seq[String], stck: List[String]): String =
         var recording = false
-        val out_st = (ops foldLeft st) {(acc, op) =>
+        val out_st = (ops foldLeft stck) {(acc, op) =>
             !(Command isSpecialOp op) match
                 case true => // general case
                     !recording match
@@ -261,11 +261,11 @@ object Expressions:
         }
         out_st mkString delim
 
-    def processOp(op: String, st: List[String]): List[String] =
+    def processOp(op: String, stck: List[String]): List[String] =
         (Command isCommand op) match
-            case Some(Command.Standard) => Command.cmds(op)(st)
-            case Some(Command.Memory) => mem(op) :: st
-            case _ => op :: st // add value to stack
+            case Some(Command.Standard) => Command.cmds(op)(stck)
+            case Some(Command.Memory) => mem(op) :: stck
+            case _ => op :: stck // add value to stack
 
     def formatOutput(output: String): String =
         if output.isEmpty then return ""
