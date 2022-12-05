@@ -1,11 +1,9 @@
 # exp
 
 ## features
-- control flow
-- read files
+- control flow (e.g., `if`, `eq`, ...)
+- read file
 - `mean` (?)
 - `filter` (?)
-- ~~user defined functions~~
-- ~~time value of money~~
 
 ## maintainability
