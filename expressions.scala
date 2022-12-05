@@ -5,17 +5,18 @@ object Expressions:
         val output = formatOutput(evaluateOps(args, Nil))
         if !output.isEmpty then println {s"$output"}
 
-    val exp_version = "0.2.2c"
+    val exp_version = "0.3.0a"
     val delim = " "
 
     enum Command:
-        case Standard, Memory
+        case Standard, Memory, UserFunction
 
     object Command:
         def isCommand(op: String): Option[Command] =
             op match
                 case op if cmds contains op => Some(Command.Standard)
                 case op if mem contains op => Some(Command.Memory)
+                case op if usercmds contains op => Some(Command.UserFunction)
                 case _ => None
 
         /* support functions */
@@ -31,6 +32,12 @@ object Expressions:
         def binaryDouble(stck: List[String])(f: (Double, Double) => Double): List[String] =
             val b :: a :: rest = stck : @unchecked
             f(a.toDouble, b.toDouble).toString :: rest
+
+
+        /**
+         *  user defined function map
+         */
+        val usercmds = HashMap[String, Seq[String]]()
 
         /**
          *  command definitions
@@ -159,8 +166,6 @@ object Expressions:
         cmds put ("log2", unaryDouble(_)(a => (Math log10 a) / (Math log10 2)))
         cmds put ("logn", binaryDouble(_)((a, b) => (Math log10 a) / (Math log10 b)))
 
-        /*** control flow (?) ***/
-
         /*** conversion functions ***/
         /* degrees to radians */
         cmds put ("deg_rad", unaryDouble(_)(Math.toRadians))
@@ -245,7 +250,7 @@ object Expressions:
         /**
          *  special operations
          */
-        val specialOps = HashSet[String]("[", "]", "_")
+        val specialOps = HashSet[String]("[", "]", "_", "fn")
         def isSpecialOp(op: String): Boolean = specialOps contains op
 
     end Command
@@ -264,6 +269,10 @@ object Expressions:
                             λ = λ :+ op // append op to stored anonymous function
                             acc
                 case _ => op match // special op
+                    case "fn" => // add user defined function
+                        val name :: rest = acc : @unchecked
+                        Command.usercmds put (name, λ)
+                        rest
                     case "[" => // start recording anonymous function
                         λ = Seq()
                         recording = true
@@ -280,6 +289,7 @@ object Expressions:
         (Command isCommand op) match
             case Some(Command.Standard) => Command.cmds(op)(stck)
             case Some(Command.Memory) => mem(op) :: stck
+            case Some(Command.UserFunction) => (evaluateOps(Command usercmds op, stck) split delim).toList
             case _ => op :: stck // add value to stack
 
     def formatOutput(output: String): String =
