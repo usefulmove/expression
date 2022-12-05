@@ -1,10 +1,11 @@
 # exp
 
 ## features
-- time value of money (?)
+- control flow
+- read files
 - `mean` (?)
-- functions (?)
-- read files (?)
 - `filter` (?)
+- ~~user defined functions~~
+- ~~time value of money~~
 
 ## maintainability
