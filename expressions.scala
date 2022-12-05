@@ -245,8 +245,8 @@ object Expressions:
         /**
          *  special operations
          */
-        val special_ops = HashSet[String]("[", "]", "_")
-        def isSpecialOp(op: String): Boolean = special_ops contains op
+        val specialOps = HashSet[String]("[", "]", "_")
+        def isSpecialOp(op: String): Boolean = specialOps contains op
 
     end Command
 
