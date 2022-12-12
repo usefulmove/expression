@@ -115,6 +115,7 @@ object Expressions:
         cmds put ("frac", unaryDouble(_)(a => a - Math.floor(a)))
         cmds put ("floor", unaryDouble(_)(Math.floor))
         cmds put ("inv", unaryDouble(_)(1 / _))
+        cmds put ("mean", stck => ((stck foldLeft 0.0){_ + _.toDouble} / stck.length).toString +: Nil)
         cmds put ("max", binaryDouble(_)(Math.max))
         cmds put ("min", binaryDouble(_)(Math.min))
         cmds put ("minmax", stck =>
